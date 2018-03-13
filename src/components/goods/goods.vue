@@ -1,17 +1,17 @@
 <template>
   <div class="goods">
-    <div class="menu-wrapper">
-      <ul v-if="goods">
-        <li v-for="(item, index) in goods" :key="index" class="menu-item">
+    <div class="menu-wrapper" ref="menuWrapper">
+      <ul v-if="goods" class="content">
+        <li v-for="(item, index) in goods" :key="index" class="menu-item" :class="{'current':currentIndex===index}" @click="selectMenu(index,$event)">
           <div class="text border-1px">
             <span v-if="item.type>0" class="icon" :class="classMap[item.type]"></span>{{item.name}}
           </div>
         </li>
       </ul>
     </div>
-    <div class="foods-wrapper">
-      <ul v-if="goods">
-        <li v-for="(item, index) in goods" :key="index" class="food-list  border-1px">
+    <div class="foods-wrapper" ref="foodsWrapper">
+      <ul v-if="goods" class="content">
+        <li v-for="(item, index) in goods" :key="index" class="food-list food-list-hook border-1px">
           <h1 class="title border-1px">{{item.name}}</h1>
           <ul v-if="item.foods">
             <li v-for="(food, index) in item.foods"  :key="index" class="food-item">
@@ -22,8 +22,7 @@
                 <h2 class="name">{{food.name}}</h2>
                 <p class="desc">{{food.description}}</p>
                 <div class="extra">
-                  <span>月售 {{food.sellCount}}</span>
-                  <span>好评率 {{food.rating}}%</span>
+                  <span>月售 {{food.sellCount}}</span><span>好评率 {{food.rating}}%</span>
                 </div>
                 <div class="price">
                   <span class="new-price">￥{{food.price}}</span>
@@ -35,22 +34,79 @@
         </li>
       </ul>
     </div>
+    <shopcart :min-price="seller.minPrice" :delivery-price="seller.deliveryPrice"></shopcart>
   </div>
 </template>
 
 <script type="text/ecmascript-6">
+  import BScroll from 'better-scroll';
+  import shopcart from 'components/shopcart/shopcart.vue';
   const ERR_OK = 0;
   export default {
     props: {
       seller: {
-        type: Object
+        type: Object,
+        required: true
       }
+    },
+    components: {
+      shopcart
     },
     data () {
       return {
         goods: [],
-        classMap: []
+        classMap: [],
+        menuScroll: '',
+        foodScroll: '',
+        listHeight: [],
+        scrollY: 0
       };
+    },
+    computed: {
+      currentIndex() {
+        let len = this.listHeight.length;
+        for (let i = 0; i < len; i++) {
+          let height1 = this.listHeight[i];
+          if (i === len - 1) {
+            return i;
+          } else {
+            let height2 = this.listHeight[i + 1];
+            if (this.scrollY >= height1 && this.scrollY < height2) {
+              return i;
+            }
+          }
+        }
+        return 0;
+      }
+    },
+    methods: {
+      _initScroll() {
+          this.menuScroll = new BScroll(this.$refs.menuWrapper, {
+            click: true
+          });
+          this.foodScroll = new BScroll(this.$refs.foodsWrapper, {
+            probeType: 3
+          });
+          this.foodScroll.on('scroll', (pos) => {
+            this.scrollY = Math.abs(Math.round(pos.y));
+          });
+      },
+      _calculateHeight() {
+          let foodList = this.$refs.foodsWrapper.getElementsByClassName('food-list-hook');
+          let len = foodList.length;
+          let height = 0;
+          this.listHeight.push(height);
+          for (let i = 0; i < len; i++) {
+            let item = foodList[i];
+            height += item.clientHeight;
+            this.listHeight.push(height);
+          }
+      },
+      selectMenu (index, event) {
+        let foodList = this.$refs.foodsWrapper.getElementsByClassName('food-list-hook');
+        let el = foodList[index];
+        this.foodScroll.scrollToElement(el, 300);
+      }
     },
     created () {
       this.classMap = ['decrease', 'discount', 'special', 'invoice', 'guarantee'];
@@ -58,6 +114,10 @@
         response = response.body;
           if (response.errno === ERR_OK) {
             this.goods = response.data;
+            this.$nextTick(() => {
+              this._initScroll();
+              this._calculateHeight();
+            });
             console.log(this.goods);
           }
       });
@@ -74,16 +134,24 @@
     bottom: 46px
     width: 100%
     over-flow: hidden
+    z-index: -200
     .menu-wrapper
       flex: 0 0 80px
       width: 80px
       background: #f3f5f7
       .menu-item
         display: table
-        width: 56px
         height: 54px
         line-height: 14px
-        margin: 0 auto
+        padding: 0 12px
+        &.current
+          position: relative
+          z-index: 10px
+          margin-top: -1px
+          background-color: #fff
+          font-weight: 700
+          .text
+            border-none()
         .text
           display: table-cell
           width: 56px
@@ -148,7 +216,7 @@
               color: rgb(7,17,27)
             .desc, .extra
               margin-top: 8px
-              line-height: 10px
+              line-height: 12px
               font-size: 10px
               color: rgb(147, 153, 159)
               /*white-space: nowrap*/
@@ -169,5 +237,4 @@
                   margin-left: 8px
                   text-decoration: line-through
                   color: rgb(147, 153, 159)
-
 </style>

@@ -6,7 +6,7 @@
       <div class="tab-item"><a><span></span>评价</a></div>
       <div class="tab-item"><a>商家</a></div>
     </div>
-    <goods></goods>
+    <goods :seller="seller"></goods>
     <!--<rounter-view></rounter-view>-->
     <div>
     </div>
@@ -53,6 +53,7 @@
       height: 40px
       line-height: 40px
       border-1px(rgba(7,17,27,0.2))
+      background-color: #fff
       .tab-item
         flex:1 1 auto
         text-align: center
