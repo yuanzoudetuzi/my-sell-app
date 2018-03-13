@@ -1,0 +1,90 @@
+<template>
+  <div class="star" :class="starType">
+    <span v-for="(itemClass, index) in itemClasses" class="star-item" :class="itemClass" :key="index"></span>
+  </div>
+</template>
+
+<script type="text/ecmascript-6" scope>
+  const LENGTH = 5;
+  const CLS_ON = 'on';
+  const CLS_HALF = 'half';
+  const CLS_OFF = 'off';
+  export default {
+    props: {
+      size: {
+        type: Number
+      },
+      score: {
+        type: Number
+      }
+    },
+    computed: {
+      starType() {
+        return 'star-' + this.size;
+      },
+      itemClasses() {
+        let result = [];
+        let score = Math.floor(this.score * 2) / 2;
+        let hasDecimal = score % 1 !== 0;
+        let integer = Math.floor(score);
+        for (let i = 0; i < integer; i++) {
+          result.push(CLS_ON);
+        }
+        if (hasDecimal) {
+          result.push(CLS_HALF);
+        }
+        while (result.length < LENGTH) {
+          result.push(CLS_OFF);
+        }
+        return result;
+      }
+    }
+  };
+</script>
+
+<style lang="stylus" rel="stylesheet/stylus" type="text/stylus">
+  @import '../../common/stylus/mixin.styl'
+  set-size($w, $h, $margin-r) {
+      width: $w
+      height: $h
+      margin-right: $margin-r
+      background-size: $w $h
+  }
+  .star
+    font-size: 0
+    .star-item
+      display: inline-block
+      background-repeat: no-repeat
+    &.star-48
+      .star-item
+        set-size(20px, 20px, 22px)
+        &:last-child
+          margin-right: 0
+        &.on
+          bg-image ('star48_on')
+        &.half
+          bg-image ('star48_half')
+        &.off
+          bg-image ('star48_off')
+    &.star-36
+      .star-item
+        set-size(15px, 15px, 6px)
+        &:last-child
+          margin-right: 0
+        &.on
+          bg-image ('star48_on')
+        &.half
+          bg-image ('star48_half')
+        &.off
+          bg-image ('star48_off')
+    &.star-24
+      set-size(10px, 10px, 3px)
+      &:last-child
+        margin-right: 0
+      &.on
+        bg-image ('star48_on')
+      &.half
+        bg-image ('star48_half')
+      &.off
+        bg-image ('star48_off')
+</style>
