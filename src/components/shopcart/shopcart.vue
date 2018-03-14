@@ -15,6 +15,13 @@
         <div class="pay" :class="{enough:totalPrice>=minPrice}"><span v-text="payDes"></span></div>
       </div>
     </div>
+    <div class="ball-container">
+      <transition-group @before-enter="beforeEnter" @enter="enter" @after-enter="afterEnter"  name="drop" tag="div">
+        <div v-for="(ball, index) in balls" :key="index" v-show="ball.show" class="ball">
+          <div class="inner inner-hook"></div>
+        </div>
+      </transition-group>
+    </div>
   </div>
 </template>
 
@@ -38,6 +45,28 @@
         type: Number,
         default: 30
       }
+    },
+    data () {
+      return {
+        balls: [
+          {
+            show: false
+          },
+          {
+            show: false
+          },
+          {
+            show: false
+          },
+          {
+            show: false
+          },
+          {
+            show: false
+          }
+        ],
+        dropBalls: []
+      };
     },
     computed: {
       totalPrice () {
@@ -65,9 +94,66 @@
         }
       }
     },
-    data () {
-      return {
-      };
+    methods: {
+      drop (el) {
+        console.log('drop target');
+        console.log(el);
+        for (let i = 0;i < this.balls.length; i++) {
+          let ball = this.balls[i];
+          if (!ball.show) {
+            ball.show = true;
+            ball.el = el;
+            this.dropBalls.push(ball);
+            return;
+          }
+        }
+      },
+      beforeEnter: function (el) {
+        console.log(' beforeEnter');
+//        console.log(el);
+        let count = this.balls.length;
+        while (count--) {
+          let ball = this.balls[count];
+          console.log(ball.show);
+          if (ball.show) {
+            let rect = ball.el.getBoundingClientRect();
+            console.log(rect);
+            console.log('rect');
+            let x = rect.left - 32;
+            let y = -(window.innerHeight - rect.top - 22 * 2);
+            el.style.display = 'inline-block';
+            el.style.webkitTransform = `translate3d(0,${y}px,0)`;
+            el.style.transform = `translate3d(0,${y}px,0)`;
+            let inner = el.getElementsByClassName('inner-hook')[0];
+            inner.style.webkitTransform = `translate3d(${x}px,0,0)`;
+            inner.style.transform = `translate3d(${x}px,0,0)`;
+          }
+        }
+//        console.log(el);
+      },
+      enter: function (el, done) {
+        // ...
+        /* 触发浏览器重绘 */
+        /* eslint-disable no-unused-vars */
+        let rf = el.offsetHeight;
+        console.log('enter');
+        this.$nextTick(() => {
+          el.style.webkitTransform = 'translate3d(0,0,0)';
+          el.style.transform = 'translate3d(0,0,0)';
+          let inner = el.getElementsByClassName('inner-hook')[0];
+          inner.style.webkitTransform = 'translate3d(0,0,0)';
+          inner.style.transform = 'translate3d(0,0,0)';
+        });
+        done();
+      },
+      afterEnter: function (el) {
+        console.log('after enter');
+        let ball = this.dropBalls.shift();
+        if (ball.show) {
+            ball.show = false;
+//          el.style.display = 'none';  /*不能加，否则看不到小球*/
+        }
+      }
     }
   };
 </script>
@@ -153,4 +239,21 @@
           &.enough
             background-color: #00b43c
             color: #fff
+    .ball-container
+      .ball
+        position: fixed
+        left: 32px
+        bottom: 22px
+        z-index: 200px
+        transition: all 0.5s cubic-bezier(0.49, -0.29, 0.75, 0.41)
+        .inner
+          width: 16px
+          height: 16px
+          border-radius: 50%
+          background: rgb(0, 160, 220)
+          transition: all 0.4s
+        &.drop-enter-active
+          transition: all 0.4s
+          .inner
+            transition: all 0.4s linear
 </style>

@@ -28,19 +28,23 @@
                   <span class="new-price">￥{{food.price}}</span>
                   <span class="oldPrice" v-show="food.oldPrice">￥{{food.oldPrice}}</span>
                 </div>
+                <div class="cartcontrol-wrapper">
+                  <cartcontrol @cartAdd="listenCartAdd" :food.sync="food"></cartcontrol>
+                </div>
               </div>
             </li>
           </ul>
         </li>
       </ul>
     </div>
-    <shopcart :min-price="seller.minPrice" :delivery-price="seller.deliveryPrice"></shopcart>
+    <shopcart ref="shopcart" :select-foods="selectFoods" :min-price="seller.minPrice" :delivery-price="seller.deliveryPrice"></shopcart>
   </div>
 </template>
 
 <script type="text/ecmascript-6">
   import BScroll from 'better-scroll';
   import shopcart from 'components/shopcart/shopcart.vue';
+  import cartcontrol from 'components/cartcontrol/cartcontrol.vue';
   const ERR_OK = 0;
   export default {
     props: {
@@ -50,7 +54,8 @@
       }
     },
     components: {
-      shopcart
+      shopcart,
+      cartcontrol
     },
     data () {
       return {
@@ -63,6 +68,7 @@
       };
     },
     computed: {
+      /* 当前在哪一类食物分类下 */
       currentIndex() {
         let len = this.listHeight.length;
         for (let i = 0; i < len; i++) {
@@ -77,6 +83,18 @@
           }
         }
         return 0;
+      },
+      /* 选择了哪些food */
+      selectFoods () {
+        let foods = [];
+        this.goods.forEach((good) => {
+          good.foods.forEach((food) => {
+            if (food.count > 0) {
+              foods.push(food);
+            }
+          });
+        });
+        return foods;
       }
     },
     methods: {
@@ -85,6 +103,7 @@
             click: true
           });
           this.foodScroll = new BScroll(this.$refs.foodsWrapper, {
+            click: true,
             probeType: 3
           });
           this.foodScroll.on('scroll', (pos) => {
@@ -106,6 +125,13 @@
         let foodList = this.$refs.foodsWrapper.getElementsByClassName('food-list-hook');
         let el = foodList[index];
         this.foodScroll.scrollToElement(el, 300);
+      },
+      /* 监听cartcontrol组件的cartAdd事件，再调用shopcart组件的方法 */
+      listenCartAdd (target) {
+        /* 异步优化动画显示 */
+        this.$nextTick(() => {
+          this.$refs.shopcart.drop(target);
+        });
       }
     },
     created () {
@@ -207,6 +233,7 @@
               width: 100%
               height: 100%
           .content
+            position: relative
             flex: 1
             margin: 4px 0 0 10px
             text-align: left;
@@ -237,4 +264,8 @@
                   margin-left: 8px
                   text-decoration: line-through
                   color: rgb(147, 153, 159)
+            .cartcontrol-wrapper
+              position: absolute
+              bottom: 0
+              right: 0
 </style>
