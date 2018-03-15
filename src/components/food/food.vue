@@ -13,8 +13,18 @@
     },
     data () {
       return {
-        showFlag: true
+
       };
+    },
+    computed: {
+      showFlag () {
+       /* if (!this.food) {
+          return false;
+        } else {
+          return true;
+        } */
+       return false;
+      }
     }
   };
 </script>
@@ -22,6 +32,7 @@
 <style lang="stylus" rel="stylesheet/stylus" type="text/stylus">
   .food
     position: fixed
+    top: 0
     left: 0
     bottom: 48px
     width: 100%

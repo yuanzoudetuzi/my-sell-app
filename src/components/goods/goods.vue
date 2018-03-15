@@ -1,44 +1,46 @@
 <template>
-  <div class="goods">
-    <div class="menu-wrapper" ref="menuWrapper">
-      <ul v-if="goods" class="content">
-        <li v-for="(item, index) in goods" :key="index" class="menu-item" :class="{'current':currentIndex===index}" @click="selectMenu(index,$event)">
-          <div class="text border-1px">
-            <span v-if="item.type>0" class="icon" :class="classMap[item.type]"></span>{{item.name}}
-          </div>
-        </li>
-      </ul>
+  <div>
+    <div class="goods">
+      <div class="menu-wrapper" ref="menuWrapper">
+        <ul v-if="goods" class="content">
+          <li v-for="(item, index) in goods" :key="index" class="menu-item" :class="{'current':currentIndex===index}" @click="selectMenu(index,$event)">
+            <div class="text border-1px">
+              <span v-if="item.type>0" class="icon" :class="classMap[item.type]"></span>{{item.name}}
+            </div>
+          </li>
+        </ul>
+      </div>
+      <div class="foods-wrapper" ref="foodsWrapper">
+        <ul v-if="goods" class="content">
+          <li v-for="(item, index) in goods" :key="index" class="food-list food-list-hook border-1px">
+            <h1 class="title border-1px">{{item.name}}</h1>
+            <ul v-if="item.foods">
+              <li v-for="(food, index) in item.foods"  :key="index" class="food-item"  @click="selectDetailFood(food.$event)">
+                <div class="icon">
+                  <img :src="food.icon" alt="加载图片失败">
+                </div>
+                <div class="content">
+                  <h2 class="name">{{food.name}}</h2>
+                  <p class="desc">{{food.description}}</p>
+                  <div class="extra">
+                    <span>月售 {{food.sellCount}}</span><span>好评率 {{food.rating}}%</span>
+                  </div>
+                  <div class="price">
+                    <span class="new-price">￥{{food.price}}</span>
+                    <span class="oldPrice" v-show="food.oldPrice">￥{{food.oldPrice}}</span>
+                  </div>
+                  <div class="cartcontrol-wrapper">
+                    <cartcontrol @cartAdd="listenCartAdd" :food.sync="food"></cartcontrol>
+                  </div>
+                </div>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </div>
     </div>
-    <div class="foods-wrapper" ref="foodsWrapper">
-      <ul v-if="goods" class="content">
-        <li v-for="(item, index) in goods" :key="index" class="food-list food-list-hook border-1px">
-          <h1 class="title border-1px">{{item.name}}</h1>
-          <ul v-if="item.foods">
-            <li v-for="(food, index) in item.foods"  :key="index" class="food-item">
-              <div class="icon">
-                <img :src="food.icon" alt="加载图片失败">
-              </div>
-              <div class="content">
-                <h2 class="name">{{food.name}}</h2>
-                <p class="desc">{{food.description}}</p>
-                <div class="extra">
-                  <span>月售 {{food.sellCount}}</span><span>好评率 {{food.rating}}%</span>
-                </div>
-                <div class="price">
-                  <span class="new-price">￥{{food.price}}</span>
-                  <span class="oldPrice" v-show="food.oldPrice">￥{{food.oldPrice}}</span>
-                </div>
-                <div class="cartcontrol-wrapper">
-                  <cartcontrol @cartAdd="listenCartAdd" :food.sync="food"></cartcontrol>
-                </div>
-              </div>
-            </li>
-          </ul>
-        </li>
-      </ul>
-    </div>
-    <!--<food :food="detailFood"></food>-->
     <shopcart ref="shopcart" :select-foods="selectFoods" :min-price="seller.minPrice" :delivery-price="seller.deliveryPrice"></shopcart>
+    <food :food="detailFood"></food>
   </div>
 </template>
 
@@ -53,9 +55,6 @@
       seller: {
         type: Object,
         required: true
-      },
-      detailFood: {
-
       }
     },
     components: {
@@ -70,7 +69,8 @@
         menuScroll: '',
         foodScroll: '',
         listHeight: [],
-        scrollY: 0
+        scrollY: 0,
+        detailFood: {}
       };
     },
     computed: {
@@ -140,6 +140,11 @@
         this.$nextTick(() => {
           this.$refs.shopcart.drop(target);
         });
+      },
+      selectDetailFood (food, $event) {
+        this.detailFood = food;
+        console.log('detailFood');
+        console.log(this.detailFood);
       }
     },
     created () {
@@ -167,8 +172,8 @@
     top: 174px
     bottom: 46px
     width: 100%
-    over-flow: hidden
     z-index: -10
+    over-flow: hidden
     .menu-wrapper
       flex: 0 0 80px
       width: 80px
