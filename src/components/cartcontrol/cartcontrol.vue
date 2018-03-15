@@ -45,6 +45,7 @@
       padding: 6px
       .inner
         display: inline-block
+        height: 24px
         line-height: 24px
         font-size: 24px
         color: rgb(0, 160, 220)

@@ -266,6 +266,6 @@
                   color: rgb(147, 153, 159)
             .cartcontrol-wrapper
               position: absolute
-              bottom: 0
+              bottom: -12px
               right: 0
 </style>
