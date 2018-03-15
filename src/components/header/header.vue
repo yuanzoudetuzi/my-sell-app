@@ -29,6 +29,9 @@
     <div class="background">
       <img :src="seller.avatar">
     </div>
+    <div class="background2">
+      <img :src="seller.avatar">
+    </div>
     <transition name="fade">
       <div v-show="detailShow" class="detail" >
         <div class="detail-wrapper clearfix">
@@ -206,6 +209,16 @@
       height:100%
       z-index: -1
       filter: blur(10px)
+      img
+        width: 100%
+        height: 100%
+    .background2
+      position: absolute
+      top: 0
+      left: 0
+      width: 100%
+      height:100%
+      z-index: -2
       img
         width: 100%
         height: 100%

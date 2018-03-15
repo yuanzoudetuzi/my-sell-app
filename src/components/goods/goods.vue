@@ -37,12 +37,14 @@
         </li>
       </ul>
     </div>
+    <!--<food :food="detailFood"></food>-->
     <shopcart ref="shopcart" :select-foods="selectFoods" :min-price="seller.minPrice" :delivery-price="seller.deliveryPrice"></shopcart>
   </div>
 </template>
 
 <script type="text/ecmascript-6">
   import BScroll from 'better-scroll';
+  import food from 'components/food/food.vue';
   import shopcart from 'components/shopcart/shopcart.vue';
   import cartcontrol from 'components/cartcontrol/cartcontrol.vue';
   const ERR_OK = 0;
@@ -51,9 +53,13 @@
       seller: {
         type: Object,
         required: true
+      },
+      detailFood: {
+
       }
     },
     components: {
+      food,
       shopcart,
       cartcontrol
     },
@@ -108,6 +114,7 @@
           });
           this.foodScroll.on('scroll', (pos) => {
             this.scrollY = Math.abs(Math.round(pos.y));
+//            console.log(scrollY);
           });
       },
       _calculateHeight() {
@@ -122,6 +129,7 @@
           }
       },
       selectMenu (index, event) {
+        console.log('selectMenu');
         let foodList = this.$refs.foodsWrapper.getElementsByClassName('food-list-hook');
         let el = foodList[index];
         this.foodScroll.scrollToElement(el, 300);
@@ -160,7 +168,7 @@
     bottom: 46px
     width: 100%
     over-flow: hidden
-    z-index: -200
+    z-index: -10
     .menu-wrapper
       flex: 0 0 80px
       width: 80px

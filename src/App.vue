@@ -8,8 +8,6 @@
     </div>
     <goods :seller="seller"></goods>
     <!--<rounter-view></rounter-view>-->
-    <div>
-    </div>
   </div>
 </template>
 
@@ -44,6 +42,7 @@
   @import "common/stylus/index.styl"
   .main-box
     max-width: 1200px
+    height: 100%
     margin: auto
     text-align: center
     .tab
@@ -57,12 +56,12 @@
       .tab-item
         flex:1 1 auto
         text-align: center
-  .tab-item > a
-    display: block
-    width: 100%
-    height 100%
-    font-size: 14px
-    color: rgb(77,82,93)
+      .tab-item > a
+        display: block
+        width: 100%
+        height 100%
+        font-size: 14px
+        color: rgb(77,82,93)
   /*.main-box {
     max-width: 1200px;
     margin: auto;
