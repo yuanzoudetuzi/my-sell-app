@@ -5,7 +5,7 @@ import Vue from 'vue';
 import App from './App';
 import VueResouce from 'vue-resource';
 // import goods from 'components/goods/goods';
-// import ratings from 'components/ratings/ratings';
+// import ratingselect from 'components/ratingselect/ratingselect';
 // import seller from 'components/seller/seller';
 Vue.config.productionTip = false;
 Vue.use(VueResouce);
