@@ -6,34 +6,47 @@
       <div class="tab-item"><a><span></span>评价</a></div>
       <div class="tab-item"><a>商家</a></div>
     </div>
-    <goods :seller="seller"></goods>
+    <!--<goods :seller="seller"></goods>-->
     <!--<rounter-view></rounter-view>-->
+    <!--<ratings :seller="seller"></ratings>-->
+    <seller :seller="seller"></seller>
   </div>
 </template>
 
 <script>
   import header from 'components/header/header.vue';
   import goods from 'components/goods/goods.vue';
+  import ratings from 'components/ratings/ratings.vue';
+  import seller from 'components/seller/seller.vue';
+  import {urlParse} from 'common/js/urlParse.js';
   const ERR_OK = 0;
   export default {
     name: 'App',
     data () {
       return {
-        seller: {}
+        seller: {
+          id: (() => {
+            let queryParam = urlParse();
+            console.log(queryParam);
+            return queryParam.id;
+          })()
+        }
       };
     },
     created() {
-      this.$http.get('/api/seller').then((response) => {
+      this.$http.get('/api/seller?id=this.seller.id').then((response) => {
         response = response.body;
         if (response.errno === ERR_OK) {
-          this.seller = response.data;
+          this.seller = Object.assign({}, this.seller, response.data);
           console.log(this.seller);
         }
       });
     },
     components: {
       'v-header': header,
-      'goods': goods
+      'goods': goods,
+      'ratings': ratings,
+      'seller': seller
     }
   };
 </script>
@@ -62,30 +75,4 @@
         height 100%
         font-size: 14px
         color: rgb(77,82,93)
-  /*.main-box {
-    max-width: 1200px;
-    margin: auto;
-    text-align: center;
-  }
-  .main-box .tab {
-    display: flex;
-    flex-direction: row;
-    width: 100%;
-    height: 40px;
-    line-height: 40px;
-    border-bottom: 1px solid rgba(7,17,27,0.2);
-  }
-  .tab .tab-item {
-    flex:1 1 auto;
-    text-align: center;
-  }
-  .tab-item > a {
-    display: block;
-    font-size: 14px;
-    color: rgb(77,82,93);
-  }
-  .tab-item > a.active {
-    color: rgb(240,20,20);
-  }*/
-
 </style>

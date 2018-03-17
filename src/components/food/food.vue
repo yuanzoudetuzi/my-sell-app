@@ -99,8 +99,6 @@
        this.showFlag = true;
        this.selectType = ALL;
        this.onlyContent = false;
-       console.log('food ratings');
-       console.log(this.food);
        this.$nextTick(() => {
          if (!this.scroll) {
            this.scroll = new BScroll(this.$refs.food, {

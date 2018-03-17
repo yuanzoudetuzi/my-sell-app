@@ -114,7 +114,6 @@
           });
           this.foodScroll.on('scroll', (pos) => {
             this.scrollY = Math.abs(Math.round(pos.y));
-//            console.log(scrollY);
           });
       },
       _calculateHeight() {

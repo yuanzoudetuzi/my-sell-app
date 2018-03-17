@@ -55,18 +55,19 @@
     },
     methods: {
       select (type, event) {
-        if (!event._constructed) {
-          /* eslint-disable no-undef */
-            return;
-        }
+//        if (!event._constructed) {
+//          /* eslint-disable no-undef */
+//            return;
+//        }
+        console.log('select');
         this.foodSelectType = type;
         this.$emit('ratingtypeSelect', type);
       },
       toggleContent () {
-        if (!event._constructed) {
-          /* eslint-disable no-undef */
-          return;
-        }
+//        if (!event._constructed) {
+//          /* eslint-disable no-undef */
+//          return;
+//        }
         this.foodOnlyContent = !this.foodOnlyContent;
         this.$emit('contentToggle', this.foodOnlyContent);
       }
