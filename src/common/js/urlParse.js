@@ -4,7 +4,9 @@
 * @return Object {id: 12345,a:b}
 * * */
 export function urlParse () {
-  let url = window.location.search;
+  let url = window.location.href;
+  console.log('url');
+  console.log(url);
   let obj = {};
   let reg = /[?&][^?&]+=[^?&]+/g;
   let arr = url.match(reg);
